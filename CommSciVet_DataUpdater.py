@@ -1,7 +1,10 @@
-# Name:        Community Science Vetting Database Updater
-# Purpose:
-# Author:      MMoore
-# Created:     01/24/2023
+# Name: Community Science Vetting Database Updater
+# Purpose: Take iNat exports and compare records to those that are already in the CommSciVet iNat feature class for new,
+# updated, and unchanged records. Load new records into FC, update records that have been updated since they were loaded,
+# ignore records that are unchanged.
+# Author:
+# Created: 01/24/2023
+# Updates:
 #-------------------------------------------------------------------------------
 
 # Import modules
@@ -45,18 +48,23 @@ inat_df['feature_longitude'] = inat_df['feature_longitude'].fillna(inat_df['long
 
 
 
+
 # add 'import_date' column to inat_df Pandas dataframe filled with current date
 
 
 
+# create temporary FC in memory workspace from inat_df Pandas dataframe - not sure how to do this
 
 
-# get list of ids from new data
-new_ids = inat_df["id"].values.tolist()
+
+
 # get list of ids from old data
 old_ids = sorted({row[0] for row in arcpy.da.SearchCursor(comm_fc,"id")})
+# get list of ids from new data
+new_ids = "<enter search cursor for ids once temp fc is created>"
 
-# create dictionary of ids with corresponding data from new data from iNat export
+
+# create dictionary of ids with corresponding data from new data from iNat export - LOOK AT old_et_dict below for example code
 
 
 
@@ -74,7 +82,7 @@ old_ids = sorted({row[0] for row in arcpy.da.SearchCursor(comm_fc,"id")})
 
 
 ###########################################################
-### BELOW IS FROM A DIFFERENT SCRIPT THAT COMPARES VALUES.. IT SHOULD BE USEFUL
+### BELOW IS FROM A DIFFERENT SCRIPT THAT COMPARES VALUES.. IT SHOULD BE USEFUL FOR COMPARING NEW TO OLD VALUES
 ###########################################################
 
 # records in new_elsubids that are not in old_elsubids, so therefore classified as added

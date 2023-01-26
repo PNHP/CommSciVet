@@ -39,19 +39,14 @@ inat_df['feature_latitude'] = inat_df['feature_latitude'].fillna(inat_df['latitu
 inat_df['feature_longitude'] = inat_df['feature_longitude'].fillna(inat_df['longitude'])
 
 # add 'record_status' column to inat_df Pandas dataframe with no data in it
-
-
-
+inat_df.insert(loc = 1, column = "record_status", value = "")
 
 # get current date in 'mm/dd/yyyy' format
-
-
-
-
+today = datetime.date.today()
+day = today.strftime("%m/%d/%y")
 
 # add 'import_date' column to inat_df Pandas dataframe filled with current date
-
-
+inat_df.insert(loc = 2, column = "import_date", value = day)
 
 # create temporary FC in memory workspace from inat_df Pandas dataframe - not sure how to do this
 

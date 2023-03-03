@@ -23,7 +23,7 @@ arcpy.env.workspace = "memory"
 class Toolbox(object):
     def __init__(self):
         self.label = "CommSciVet_Updates"
-        self.alias = "CommSciVet_Updates"
+        self.alias = "CommSciVet Toolbox"
         self.canRunInBackground = False
 
         # List of tool classes associated with this toolbox
@@ -31,14 +31,14 @@ class Toolbox(object):
 
 class CommSciVet_update(object):
     def __init__(self):
-        self.label = "Update CommSciVet Data "
+        self.label = "Import iNat Data"
         self.description = ""
         self.canRunInBackground = False
 
     def getParameterInfo(self):
         """Define parameter definitions"""
         csv = arcpy.Parameter(
-            displayName = "csv",
+            displayName = "CSV of iNat records you wish to import into the CommSciVet gdb:",
             name = "csv",
             datatype = "DEFile",
             parameterType = "Required",
@@ -136,8 +136,7 @@ class CommSciVet_update(object):
 
         # create dictionary of all data in iNat import that was not classified as added
         inat_import_dict = {int(row[0]): [row[0:]] for row in arcpy.da.SearchCursor(temp_inat_import,
-                                                                                    inat_fields) if
-                            row[0] not in added_ids}
+                                                                                    inat_fields) if row[0] not in added_ids}
 
         # get list of dictionary index values for the length of fields
         dict_value_index = range(0, len(inat_fields))
@@ -145,34 +144,45 @@ class CommSciVet_update(object):
         # loop through each field and check for changes
         for c, i in zip(inat_fields, dict_value_index):
             arcpy.AddMessage("Checking for changes in " + c)
-            with arcpy.da.SearchCursor(comm_fc, ["id", c]) as cursor:
+            with arcpy.da.SearchCursor(comm_fc, ["id",c,"updated_at"]) as cursor:
                 for row in cursor:
                     for k, v in inat_import_dict.items():
                         if k == int(row[0]):  # check if id matches row
                             if row[1] == v[0][i]:  # check if new and existing values match - if match, then pass
                                 pass
                             else:
-                                # get values and deal with shape token issue (shape token cannot be written to text field)
-                                if c == "SHAPE@":
-                                    values = [int(row[0]), c, "updated_geometry", "updated_geometry", import_day]
+                                if row[2] > v[0][5]:
+                                    pass
                                 else:
-                                    values = [int(row[0]), c, row[1], str(v[0][i]), import_day]
-                                # insert changes into iNat change table
-                                with arcpy.da.InsertCursor(inat_changes, insert_fields) as cursor:
-                                    cursor.insertRow(values)
+                                    # get values and deal with shape token issue (shape token cannot be written to text field)
+                                    if c == "SHAPE@":
+                                        values = [int(row[0]), c, "updated_geometry", "updated_geometry", import_day]
+                                    else:
+                                        values = [int(row[0]), c, row[1], str(v[0][i]), import_day]
+                                    # insert changes into iNat change table
+                                    with arcpy.da.InsertCursor(inat_changes, insert_fields) as cursor:
+                                        cursor.insertRow(values)
 
             # get updated values and update those values in CommSciVet layer
-            with arcpy.da.UpdateCursor(comm_fc, ["id", c, "record_status", "import_date"]) as cursor:
+            with arcpy.da.UpdateCursor(comm_fc, ["id", c, "record_status", "import_date", "updated_at"]) as cursor:
                 for row in cursor:
                     for k, v in inat_import_dict.items():
                         if k == int(row[0]):
                             if row[1] == v[0][i]:
                                 pass
                             else:
-                                arcpy.AddMessage("The was an update to " + c + " for ID# " + str(row[0]))
-                                row[1] = v[0][i]
-                                row[2] = "updated"
-                                row[3] = import_day
-                                cursor.updateRow(row)
+                                if row[4] > v[0][5]:
+                                    pass
+                                else:
+                                    arcpy.AddMessage("The was an update to " + c + " for ID# " + str(row[0]))
+                                    if c == "updated_at":
+                                        row[4] = v[0][i]
+                                        cursor.updateRow(row)
+                                    else:
+                                        row[1] = v[0][i]
+                                        cursor.updateRow(row)
+                                    row[2] = "updated"
+                                    row[3] = import_day
+                                    cursor.updateRow(row)
 
         return

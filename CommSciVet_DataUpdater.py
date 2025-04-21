@@ -127,8 +127,8 @@ for c, i in zip(inat_fields, dict_value_index):
                             else:
                                 values = [int(row[0]), c, row[1], str(v[0][i]), import_day]
                             # insert changes into iNat change table
-                            with arcpy.da.InsertCursor(inat_changes, insert_fields) as cursor:
-                                cursor.insertRow(values)
+                            with arcpy.da.InsertCursor(inat_changes, insert_fields) as icursor:
+                                icursor.insertRow(values)
 
     # get updated values and update those values in CommSciVet layer
     with arcpy.da.UpdateCursor(comm_fc, ["id", c, "record_status", "import_date"]) as cursor:

@@ -51,21 +51,21 @@ class CommSciVet_update(object):
         inat_csv = params[0].valueAsText
 
         # set path for iNat download - must be .csv
-        inat_fields = ["id", "observed_on", "user_id", "user_login", "created_at", "updated_at", "license", "url",
+        inat_fields = ["id", "observed_on", "user_login", "user_name", "created_at", "updated_at", "license", "url",
                        "image_url", "sound_url", "tag_list", "description", "captive_cultivated", "place_guess",
                        "latitude", "longitude", "positional_accuracy", "private_place_guess", "private_latitude",
                        "private_longitude", "public_positional_accuracy", "geoprivacy", "taxon_geoprivacy",
                        "coordinates_obscured", "positioning_method", "positioning_device", "place_county_name",
                        "scientific_name", "common_name", "iconic_taxon_name", "taxon_id", "taxon_order_name",
-                       "taxon_family_name", "field_count", "SHAPE@"]
+                       "taxon_family_name", "SHAPE@"]
 
         # set path for existing CommSciVet FC
-        comm_fc = r"W:\\Heritage\\Heritage_Data\\CommSciVet\\CommSciVet GDB\\CommSciVet.gdb\\CommSciVet"
+        comm_fc = r"https://gis.waterlandlife.org/server/rest/services/Hosted/CommSciVet/FeatureServer/0"
         record_fields = ["record_status", "import_date"]
         comm_fields = inat_fields + record_fields
 
         # set path for iNat Changes table
-        inat_changes = r"W:\\Heritage\\Heritage_Data\\CommSciVet\\CommSciVet GDB\\CommSciVet.gdb\\inat_changes"
+        inat_changes = r"https://gis.waterlandlife.org/server/rest/services/Hosted/CommSciVet/FeatureServer/1"
         insert_fields = ["id", "change", "old_value", "new_value", "updated_at"]
 
         # import iNat .csv file as Pandas dataframe

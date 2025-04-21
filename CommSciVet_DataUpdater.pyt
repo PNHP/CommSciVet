@@ -2,7 +2,7 @@
 # Purpose: Take iNat exports and compare records to those that are already in the CommSciVet iNat feature class for new,
 # updated, and unchanged records. Load new records into FC, update records that have been updated since they were loaded,
 # ignore records that are unchanged.
-# Author:
+# Author: Molly Moore, Pennsylvania Natural Heritage Program
 # Created: 01/24/2023
 # Updates:
 #-------------------------------------------------------------------------------
